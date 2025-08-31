@@ -1,11 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { createClient } from "@supabase/supabase-js"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
-let supabase: any = null
+let supabase: SupabaseClient | null = null
 if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
   try {
-    const supabaseModule = await import("../../../lib/supabaseServer")
-    supabase = supabaseModule.supabase
-  } catch (error) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (supabaseUrl && supabaseKey) {
+      supabase = createClient(supabaseUrl, supabaseKey)
+    }
+  } catch (_error) {
     console.warn("[v0] Supabase client not available during build")
   }
 }
