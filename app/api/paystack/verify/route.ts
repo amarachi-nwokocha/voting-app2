@@ -3,8 +3,8 @@ import { type NextRequest, NextResponse } from "next/server"
 let supabase: any = null
 if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
   try {
-    const { supabase: supabaseClient } = require("../../../lib/supabaseServer")
-    supabase = supabaseClient
+    const supabaseModule = await import("../../../lib/supabaseServer")
+    supabase = supabaseModule.supabase
   } catch (error) {
     console.warn("[v0] Supabase client not available during build")
   }
