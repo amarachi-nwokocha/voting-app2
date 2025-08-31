@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/7for7', // 👈 this is the key fix
+  basePath: "/7for7",
+
+  async redirects() {
+    return [
+      {
+        source: "/7for7",
+        destination: "/7for7/",
+        permanent: true,
+      },
+    ];
+  },
 
   images: {
     remotePatterns: [
