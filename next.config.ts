@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // basePath: "/7for7",
+  basePath: "/7for7",
 
   images: {
     remotePatterns: [
