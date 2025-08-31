@@ -1,5 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { supabase } from "../../../lib/supabaseServer"
+
+let supabase: any = null
+if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
+  try {
+    const { supabase: supabaseClient } = require("../../../lib/supabaseServer")
+    supabase = supabaseClient
+  } catch (error) {
+    console.warn("[v0] Supabase client not available during build")
+  }
+}
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
 
@@ -12,6 +21,17 @@ interface Vote {
 export async function POST(request: NextRequest) {
   try {
     console.log("[v0] Payment verification started")
+
+    if (!supabase) {
+      console.error("[v0] Database client not available")
+      return NextResponse.json(
+        {
+          error: "Server configuration error",
+          details: "Database service not available",
+        },
+        { status: 500 },
+      )
+    }
 
     if (!PAYSTACK_SECRET_KEY) {
       console.error("[v0] PAYSTACK_SECRET_KEY is not set")
