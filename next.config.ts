@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/7for7', // 👈 this is the key fix
+  // basePath: '/7for7', // 👈 this is the key fix
 
   images: {
     remotePatterns: [
