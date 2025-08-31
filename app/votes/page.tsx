@@ -5,6 +5,7 @@ import { supabase } from "../lib/superbaseClient"
 import { Button } from "../components/ui/Button"
 import { generatePaymentReference, initializePaystackPayment } from "../lib/paystack"
 import Link from "next/link"
+import Image from "next/image"
 interface Contestant {
   id: string
   name: string
@@ -256,13 +257,13 @@ export default function VotePage() {
                     {/* <div className="w-16 h-16 bg-gradient-to-br from-[#8BC34A] to-[#C0A000] rounded-full flex items-center justify-center text-black font-bold text-xl">
                       {contestant.name.charAt(0)}
                     </div> */}
-                    <img
-                      src={contestant.profile_image_url ?? "/logo.png"}
-                      alt="Contestant image"
-                      width={140}
-                      height={40}
-                      className="w-16 h-16 bg-gradient-to-br from-[#8BC34A] to-[#C0A000] rounded-full flex items-center justify-center text-black font-bold text-xl"
-                    />
+                   <Image
+  src={contestant.profile_image_url ?? "/logo.png"}
+  alt="Contestant image"
+  width={64}   // equals w-16
+  height={64}  // equals h-16
+  className="w-16 h-16 rounded-full bg-gradient-to-br from-[#8BC34A] to-[#C0A000] flex items-center justify-center text-black font-bold text-xl object-cover"
+/>
 
                     <div>
                       <h3 className="text-xl font-semibold text-white">{contestant.name}</h3>

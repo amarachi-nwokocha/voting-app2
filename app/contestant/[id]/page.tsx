@@ -4,6 +4,8 @@ import { supabase } from "../../lib/superbaseClient"
 import { useParams, useRouter } from "next/navigation"
 import { Button } from "../../components/ui/Button"
 import Link from "next/link"
+import Image from "next/image" // ✅ import Next.js optimized Image
+
 interface Contestant {
   id: string
   email: string
@@ -11,8 +13,8 @@ interface Contestant {
   bio: string
   creative_field: string
   location: string
-  work_sample: string[]  // ✅ proper type
-  social_links: string[] // ✅ proper type
+  work_sample: string[]
+  social_links: string[]
   profile_image_url: string | null
   registration_code: string
   created_at: string
@@ -49,7 +51,12 @@ export default function ContestantPage() {
 
         if (error || !data) throw new Error("Contestant not found")
         setContestant(data as Contestant)
-      } catch (err: any) {
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error("Error fetching contestant:", err.message)
+        } else {
+          console.error("Unexpected error:", err)
+        }
         setError("Contestant not found or access denied")
       } finally {
         setLoading(false)
@@ -119,10 +126,10 @@ export default function ContestantPage() {
                 Your password for login is your registration code above
               </p>
             </div>
-           
           </div>
+
           <div className="flex items-center gap-10 align-baseline justify-center mb-4">
-   <Button
+            <Button
               onClick={handleLogout}
               variant="outline"
               className="border-red-400 text-red-400 hover:bg-red-400 hover:text-black bg-transparent"
@@ -130,18 +137,19 @@ export default function ContestantPage() {
               Logout
             </Button>
             <Button className="inline-block bg-gradient-to-r from-[#8BC34A] to-[#C0A000] text-black px-4 py-2 font-semibold">
-
-            <Link href='/votes'>Vote</Link>
+              <Link href="/votes">Vote</Link>
             </Button>
-</div>
+          </div>
 
           <div className="flex flex-col md:flex-row gap-8">
             {/* Profile Image */}
             <div className="flex-shrink-0">
               {contestant.profile_image_url ? (
-                <img
-                  src={contestant.profile_image_url || "/placeholder.svg"}
+                <Image
+                  src={contestant.profile_image_url}
                   alt={contestant.name}
+                  width={192}
+                  height={192}
                   className="w-48 h-48 rounded-2xl object-cover border-2 border-[#8BC34A]"
                 />
               ) : (
@@ -166,10 +174,10 @@ export default function ContestantPage() {
               {/* Work Samples */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-[#C0A000] mb-2">Work Samples</h3>
-                {contestant.work_sample && contestant.work_sample.length > 0 ? (
+                {contestant.work_sample?.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1">
                     {contestant.work_sample.map((rawLink, idx) => {
-                      const link = rawLink.replace(/[{}]/g, "") // strip braces
+                      const link = rawLink.replace(/[{}]/g, "")
                       return (
                         <li key={idx}>
                           <a
@@ -192,7 +200,7 @@ export default function ContestantPage() {
               {/* Social Links */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-[#C0A000] mb-2">Social Links</h3>
-                {contestant.social_links && contestant.social_links.length > 0 ? (
+                {contestant.social_links?.length > 0 ? (
                   <ul className="list-disc list-inside space-y-1 w-1/2">
                     {contestant.social_links.map((rawLink, idx) => {
                       const link = rawLink.replace(/[{}]/g, "")

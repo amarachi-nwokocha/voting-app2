@@ -51,6 +51,13 @@ export default function LoginPage() {
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white flex items-center justify-center px-6">
       <div className="absolute inset-0 bg-gradient-to-br from-[#8BC34A]/10 via-transparent to-[#C0A000]/10 blur-3xl opacity-60" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(139,195,74,0.1),transparent_50%)]" />
+<Link href="/" className="absolute top-6 left-6 z-20">
+  <Button
+    className="flex items-center gap-2 bg-gradient-to-r from-[#8BC34A] to-[#C0A000] text-black font-semibold px-5 py-2.5 rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition-all duration-200"
+  >
+    <span className="text-lg">←</span> Back to Hub
+  </Button>
+</Link>
 
       <div className="relative z-10 w-full max-w-md bg-gray-900/90 backdrop-blur-sm border border-gray-700/50 rounded-xl shadow-2xl p-8">
         <div className="text-center mb-8">

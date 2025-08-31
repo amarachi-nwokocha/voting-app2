@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "../lib/superbaseClient"
+import Image from "next/image"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -13,8 +14,8 @@ export default function RegisterPage() {
     bio: "",
     creativeField: "",
     location: "",
-    workSample: [""], // Changed to array for multiple links
-    socialLinks: [""], // Changed to array for multiple links
+    workSample: [""], // multiple links
+    socialLinks: [""], // multiple links
     profileImage: null as File | null,
   })
 
@@ -121,8 +122,8 @@ export default function RegisterPage() {
             bio: formData.bio,
             creative_field: formData.creativeField,
             location: formData.location,
-            work_sample: formData.workSample.filter((link) => link.trim() !== "").join(", "),
-            social_links: formData.socialLinks.filter((link) => link.trim() !== "").join(", "),
+            work_sample: formData.workSample.filter((link) => link.trim() !== ""),
+            social_links: formData.socialLinks.filter((link) => link.trim() !== ""),
             profile_image_url: profileImageUrl,
             registration_code: registrationCode,
           },
@@ -138,9 +139,7 @@ export default function RegisterPage() {
         try {
           const emailResponse = await fetch("/api/send-email", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: formData.email,
               name: formData.name,
@@ -152,15 +151,20 @@ export default function RegisterPage() {
           if (!emailResponse.ok) {
             console.error("Failed to send welcome email")
           }
-        } catch (emailError) {
+        } catch (emailError: unknown) {
           console.error("Email sending error:", emailError)
         }
 
         router.push(`/contestant/${insertedData.id}`)
       }
-    } catch (error: any) {
-      console.error(error)
-      setMessage(`❌ Error: ${error.message}`)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error)
+        setMessage(`❌ Error: ${error.message}`)
+      } else {
+        console.error("Unexpected error:", error)
+        setMessage("❌ An unexpected error occurred.")
+      }
     } finally {
       setLoading(false)
     }
@@ -216,9 +220,11 @@ export default function RegisterPage() {
             className="w-full text-sm text-gray-400"
           />
           {preview && (
-            <img
+            <Image
               src={preview || "/placeholder.svg"}
               alt="Profile Preview"
+              width={96}
+              height={96}
               className="mt-4 w-24 h-24 rounded-full object-cover border border-[#8BC34A]"
             />
           )}
@@ -241,7 +247,9 @@ export default function RegisterPage() {
             placeholder="Tell us about yourself and your creative journey..."
             className="w-full px-4 py-3 rounded-xl bg-black/60 border border-zinc-700 resize-none"
           />
-          {bioWordCount > 450 && <p className="text-xs text-yellow-400 mt-1">You're approaching the 500-word limit</p>}
+          {bioWordCount > 450 && (
+            <p className="text-xs text-yellow-400 mt-1">You&apos;re approaching the 500-word limit</p>
+          )}
         </div>
 
         {/* Creative Field */}
