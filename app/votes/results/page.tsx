@@ -75,20 +75,20 @@ export default function VoteResultsPage() {
         {/* Overview Stats */}
         {stats && (
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
+            {/* <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
               <div className="text-3xl font-bold text-[#8BC34A] mb-2">{stats.total_votes}</div>
               <div className="text-gray-300">Total Votes</div>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
+            </div> */}
+            {/* <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
               <div className="text-3xl font-bold text-[#C0A000] mb-2">
                 {stats.unique_voters > 0 ? Math.round(stats.total_votes / stats.unique_voters) : 0}
               </div>
               <div className="text-gray-300">Avg Votes/Voter</div>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
+            </div> */}
+            {/* <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
               <div className="text-3xl font-bold text-blue-400 mb-2">{stats.unique_voters}</div>
               <div className="text-gray-300">Unique Voters</div>
-            </div>
+            </div> */}
             {/* <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 text-center">
               <div className="text-lg font-bold text-white mb-1">{stats.top_contestant_name || "N/A"}</div>
               <div className="text-sm text-gray-300">Leading with {stats.top_contestant_votes} votes</div>
