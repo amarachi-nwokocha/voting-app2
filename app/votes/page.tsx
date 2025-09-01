@@ -142,11 +142,13 @@ export default function VotePage() {
         },
       }
 
-      const response = await initializePaystackPayment(paymentConfig)
+     console.log(paymentConfig)
+
+       const response = await initializePaystackPayment(paymentConfig)
 
       if (response.status && response.data.authorization_url) {
         window.location.href = response.data.authorization_url
-      } else {
+      } else { 
         throw new Error("Failed to initialize payment")
       }
     } catch (error) {

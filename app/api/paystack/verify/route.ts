@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import type { SupabaseClient } from "@supabase/supabase-js"
 
+console.log("[v0] Initializing Supabase client...")
+
 let supabase: SupabaseClient | null = null
 if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
   try {
@@ -10,13 +12,17 @@ if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
 
     if (supabaseUrl && supabaseKey) {
       supabase = createClient(supabaseUrl, supabaseKey)
+      console.log("[v0] ✅ Supabase client initialized")
+    } else {
+      console.error("[v0] ❌ Missing Supabase credentials")
     }
   } catch (error) {
-    console.warn("[v0] Supabase client not available during build")
+    console.warn("[v0] ⚠️ Supabase client initialization failed:", error)
   }
 }
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
+console.log("[v0] PAYSTACK_SECRET_KEY:", PAYSTACK_SECRET_KEY ? "found" : "MISSING")
 
 interface Vote {
   contestantId: string
@@ -25,159 +31,76 @@ interface Vote {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    console.log("[v0] Payment verification started")
+  console.log("[v0] === Payment verification API called ===")
 
+  try {
     if (!supabase) {
-      console.error("[v0] Database client not available")
       return NextResponse.json(
-        {
-          error: "Server configuration error",
-          details: "Database service not available",
-        },
+        { success: false, error: "Server configuration error", details: "Database service not available" },
         { status: 500 },
       )
     }
 
     if (!PAYSTACK_SECRET_KEY) {
-      console.error("[v0] PAYSTACK_SECRET_KEY is not set")
       return NextResponse.json(
-        {
-          error: "Server configuration error",
-          details: "Payment service not configured",
-        },
+        { success: false, error: "Server configuration error", details: "Payment service not configured" },
         { status: 500 },
       )
     }
 
-    let requestBody
-    try {
-      requestBody = await request.json()
-    } catch (parseError) {
-      console.error("[v0] Failed to parse request body:", parseError)
-      return NextResponse.json(
-        {
-          error: "Invalid request format",
-          details: "Request body must be valid JSON",
-        },
-        { status: 400 },
-      )
-    }
-
-    const { reference } = requestBody
+    // ✅ Get reference from request body
+    const body = await request.json().catch(() => null)
+    const reference = body?.reference
+console.log(reference);
 
     if (!reference) {
-      console.error("[v0] No reference provided")
       return NextResponse.json(
-        {
-          error: "Missing payment reference",
-          details: "Reference parameter is required",
-        },
+        { success: false, error: "Missing payment reference", details: "Reference parameter is required" },
         { status: 400 },
       )
     }
 
-    console.log("[v0] Verifying payment with reference:", reference)
+    console.log("[v0] 🔎 Verifying payment with Paystack, reference:", reference)
 
-    let response
-    try {
-      response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-      })
-    } catch (fetchError) {
-      console.error("[v0] Failed to connect to Paystack:", fetchError)
-      return NextResponse.json(
-        {
-          error: "Payment service unavailable",
-          details: "Could not connect to payment provider",
-        },
-        { status: 503 },
-      )
-    }
+    // ✅ Call Paystack
+    const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+      },
+    })
 
-    let data
-    try {
-      data = await response.json()
-    } catch (jsonError) {
-      console.error("[v0] Failed to parse Paystack response:", jsonError)
-      return NextResponse.json(
-        {
-          error: "Invalid response from payment service",
-          details: "Could not parse payment verification response",
-        },
-        { status: 502 },
-      )
-    }
-
-    console.log("[v0] Paystack response:", { status: response.status, dataStatus: data.status })
+    const data = await response.json()
 
     if (!response.ok || !data.status) {
-      console.error("[v0] Payment verification failed:", data)
       return NextResponse.json(
-        {
-          error: "Payment verification failed",
-          details: data.message || "Payment could not be verified",
-        },
-        { status: 400 },
+        { success: false, error: "Payment verification failed", details: data.message || "Unknown failure" },
+        { status: response.status },
       )
     }
 
-    // Payment successful, record votes in database
     if (data.data.status === "success") {
-      console.log("[v0] Payment successful, recording votes")
+      console.log("[v0] 🎉 Payment successful")
 
       const { metadata, customer } = data.data
       const votes: Vote[] = metadata?.votes || []
       const voterEmail = customer?.email
 
       if (!votes.length) {
-        console.error("[v0] No votes found in payment metadata")
         return NextResponse.json(
-          {
-            error: "Invalid payment data",
-            details: "No votes found in payment",
-          },
+          { success: false, error: "Invalid payment data", details: "No votes found in payment metadata" },
           { status: 400 },
         )
       }
 
-      let existingVotes
-      try {
-        const { data: existingData, error: selectError } = await supabase
-          .from("votes")
-          .select("id")
-          .eq("payment_reference", reference)
-          .limit(1)
+      // ✅ Prevent duplicate vote insertion
+      const { data: existingData } = await supabase
+        .from("votes")
+        .select("id")
+        .eq("payment_reference", reference)
+        .limit(1)
 
-        if (selectError) {
-          console.error("[v0] Database select error:", selectError)
-          return NextResponse.json(
-            {
-              error: "Database error",
-              details: "Could not check existing votes",
-            },
-            { status: 500 },
-          )
-        }
-
-        existingVotes = existingData
-      } catch (dbError) {
-        console.error("[v0] Database connection error:", dbError)
-        return NextResponse.json(
-          {
-            error: "Database unavailable",
-            details: "Could not connect to database",
-          },
-          { status: 503 },
-        )
-      }
-
-      if (existingVotes && existingVotes.length > 0) {
-        console.log("[v0] Votes already recorded for this payment")
+      if (existingData && existingData.length > 0) {
         return NextResponse.json({
           success: true,
           message: "Votes already recorded for this payment",
@@ -191,40 +114,21 @@ export async function POST(request: NextRequest) {
           voteInserts.push({
             contestant_id: vote.contestantId,
             payment_reference: reference,
-            amount_paid: 100, // 100 naira per vote
+            amount_paid: 100,
             voter_email: voterEmail,
             created_at: new Date().toISOString(),
           })
         }
       }
+console.log(voteInserts);
 
-      console.log("[v0] Inserting", voteInserts.length, "votes")
-
-      try {
-        const { error: insertError } = await supabase.from("votes").insert(voteInserts)
-
-        if (insertError) {
-          console.error("[v0] Database insert error:", insertError)
-          return NextResponse.json(
-            {
-              error: "Failed to record votes",
-              details: "Could not save votes to database",
-            },
-            { status: 500 },
-          )
-        }
-      } catch (insertDbError) {
-        console.error("[v0] Database insert connection error:", insertDbError)
+      const { error: insertError } = await supabase.from("votes").insert(voteInserts)
+      if (insertError) {
         return NextResponse.json(
-          {
-            error: "Database unavailable",
-            details: "Could not save votes to database",
-          },
-          { status: 503 },
+          { success: false, error: "Failed to record votes", details: insertError.message },
+          { status: 500 },
         )
       }
-
-      console.log("[v0] Votes recorded successfully")
 
       return NextResponse.json({
         success: true,
@@ -232,26 +136,22 @@ export async function POST(request: NextRequest) {
         data: {
           ...data.data,
           votesRecorded: voteInserts.length,
-          contestants: votes.map((v: Vote) => ({ name: v.contestantName, votes: v.votes })),
+          contestants: votes.map((v: Vote) => ({
+            name: v.contestantName,
+            votes: v.votes,
+          })),
         },
       })
     }
 
-    console.log("[v0] Payment status not successful:", data.data.status)
     return NextResponse.json(
-      {
-        error: "Payment not successful",
-        details: `Payment status: ${data.data.status}`,
-      },
+      { success: false, error: "Payment not successful", details: `Payment status: ${data.data.status}` },
       { status: 400 },
     )
   } catch (error) {
-    console.error("[v0] Unexpected error in payment verification:", error)
+    console.error("[v0] ❌ Unexpected error:", error)
     return NextResponse.json(
-      {
-        error: "Internal server error",
-        details: "An unexpected error occurred during payment verification",
-      },
+      { success: false, error: "Internal server error", details: "Unexpected error occurred" },
       { status: 500 },
     )
   }
