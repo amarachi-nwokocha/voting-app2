@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: "/7for7",
   trailingSlash: true, // ensures /7for7/ maps to app/page.tsx
 
   images: {
