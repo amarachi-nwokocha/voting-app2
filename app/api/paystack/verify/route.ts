@@ -11,7 +11,7 @@ if (typeof window === "undefined" && process.env.NODE_ENV !== "test") {
     if (supabaseUrl && supabaseKey) {
       supabase = createClient(supabaseUrl, supabaseKey)
     }
-  } catch (_error) {
+  } catch (error) {
     console.warn("[v0] Supabase client not available during build")
   }
 }
