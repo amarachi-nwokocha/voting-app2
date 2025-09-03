@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "../lib/superbaseClient"
 import Image from "next/image"
+import Footer from "../components/ui/Footer"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -343,7 +344,7 @@ export default function RegisterPage() {
             + Add another social link
           </button>
         </div>
-
+       <Footer />
         {/* Submit */}
         <button
           type="submit"

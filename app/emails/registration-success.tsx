@@ -30,11 +30,33 @@ export default function RegistrationSuccessEmail({
 
           <Text style={text}>You can view and manage your contestant profile using the link below:</Text>
 
-          <Section style={buttonContainer}>
-            <Link href={profileUrl} style={button}>
-              View My Profile
-            </Link>
-          </Section>
+     <Section style={{ margin: "30px 0", textAlign: "center" }}>
+  <table
+    role="presentation"
+    cellPadding="0"
+    cellSpacing="0"
+    border={0}
+    width="100%"
+    style={{ textAlign: "center" }}
+  >
+    <tr>
+      <td align="center" style={{ padding: "0 10px" }}>
+        <Link href={profileUrl} style={button}>
+          View My Profile
+        </Link>
+      </td>
+      <td align="center" style={{ padding: "0 10px" }}>
+        <Link
+          href="https://voting.pharoahshoundtattoostudios.com/votes/"
+          style={button}
+        >
+          Click here to vote
+        </Link>
+      </td>
+    </tr>
+  </table>
+</Section>
+
 
           <Text style={text}>
             Keep your registration code safe, it serves as your password when logging in with the email you used to register.
