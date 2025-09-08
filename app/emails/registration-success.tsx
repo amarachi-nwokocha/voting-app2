@@ -127,10 +127,10 @@ const code = {
   margin: "0",
 }
 
-const buttonContainer = {
-  margin: "30px 0",
-  textAlign: "center" as const,
-}
+// const buttonContainer = {
+//   margin: "30px 0",
+//   textAlign: "center" as const,
+// }
 
 const button = {
   backgroundColor: "#8BC34A",

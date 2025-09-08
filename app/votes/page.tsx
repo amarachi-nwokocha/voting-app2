@@ -116,48 +116,87 @@ export default function VotePage() {
   const getTotalVotes = () => votes.reduce((sum, vote) => sum + vote.votes, 0)
   const getTotalAmount = () => getTotalVotes() * 100
 
-  const handlePayment = async () => {
-    const totalVotes = getTotalVotes()
-    if (totalVotes < 2) {
-      alert("Minimum 2 votes required!")
-      return
-    }
-
-    if (!email || !email.includes("@")) {
-      alert("Please enter a valid email address!")
-      return
-    }
-
-    setProcessing(true)
-
-    try {
-      const paymentConfig = {
-        email,
-        amount: getTotalAmount() * 100, // Convert naira to kobo
-        currency: "NGN",
-        reference: generatePaymentReference(),
-        metadata: {
-          votes,
-          totalVotes,
-        },
-      }
-
-     console.log(paymentConfig)
-
-       const response = await initializePaystackPayment(paymentConfig)
-
-      if (response.status && response.data.authorization_url) {
-        window.location.href = response.data.authorization_url
-      } else { 
-        throw new Error("Failed to initialize payment")
-      }
-    } catch (error) {
-      console.error("Payment error:", error)
-      alert("Payment initialization failed. Please try again.")
-    } finally {
-      setProcessing(false)
-    }
+ const handlePayment = async () => {
+  const totalVotes = getTotalVotes()
+  if (totalVotes < 2) {
+    alert("Minimum 2 votes required!")
+    return
   }
+
+  if (!email || !email.includes("@")) {
+    alert("Please enter a valid email address!")
+    return
+  }
+
+  // Check voting period before processing payment
+  const checkVotingPeriod = () => {
+    const now = new Date()
+    const votingStart = new Date('2025-09-08T00:00:00Z')
+    const votingEnd = new Date('2025-10-19T23:59:59Z')
+    
+    if (now < votingStart) {
+      alert(`Voting has not started yet. Voting begins on ${votingStart.toLocaleDateString()}`)
+      return false
+    }
+    
+    if (now > votingEnd) {
+      alert(`Voting has ended. Voting closed on ${votingEnd.toLocaleDateString()}`)
+      return false
+    }
+    
+    return true
+  }
+
+  if (!checkVotingPeriod()) {
+    return
+  }
+
+  setProcessing(true)
+
+  try {
+    const paymentRef = generatePaymentReference()
+    
+    // ✅ FIX: Ensure votes and amount are NUMBERS, not strings
+    const enhancedVotes = votes.map(vote => ({
+      contestantId: vote.contestantId,
+      contestantName: vote.contestantName,
+      votes: Number(vote.votes), // ✅ Convert to number
+      amount: Number(vote.votes) * 100 // ✅ Convert to number
+    }))
+
+    console.log('✅ Enhanced votes with numbers:', enhancedVotes)
+
+    const paymentConfig = {
+      email,
+      amount: getTotalAmount() * 100,
+      currency: "NGN",
+      reference: paymentRef,
+      metadata: {
+        votes: enhancedVotes, // Now contains proper numbers
+        totalVotes: Number(totalVotes), // ✅ Convert to number
+        contestant_ids: votes.map(v => v.contestantId).join(','),
+        payment_type: 'voting',
+        contestants_summary: votes.map(v => `${v.contestantName}(${v.contestantId}):${v.votes}`).join('|'),
+        voting_timestamp: new Date().toISOString()
+      },
+    }
+
+    console.log('✅ Payment config with numbers:', paymentConfig)
+
+    const response = await initializePaystackPayment(paymentConfig)
+
+    if (response.status && response.data.authorization_url) {
+      window.location.href = response.data.authorization_url
+    } else { 
+      throw new Error("Failed to initialize payment")
+    }
+  } catch (error) {
+    console.error("Payment error:", error)
+    alert("Payment initialization failed. Please try again.")
+  } finally {
+    setProcessing(false)
+  }
+}
 
   const clearSearch = () => {
     setSearchTerm("")
