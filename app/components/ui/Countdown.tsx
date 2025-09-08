@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 type TimeLeft = {
+  weeks: number;
   days: number;
   hours: number;
   minutes: number;
@@ -11,6 +12,7 @@ type TimeLeft = {
 
 export default function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    weeks: 0,
     days: 0,
     hours: 0,
     minutes: 0,
@@ -30,12 +32,17 @@ export default function CountdownTimer() {
       const diff = targetDate.getTime() - currentTime.getTime();
 
       if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setTimeLeft({ weeks: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
       }
 
+      const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(totalDays / 7);
+      const remainingDays = totalDays % 7;
+
       setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        weeks: weeks,
+        days: remainingDays,
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / (1000 * 60)) % 60),
         seconds: Math.floor((diff / 1000) % 60),
@@ -56,6 +63,10 @@ export default function CountdownTimer() {
   </h3>
 
   <div className="flex justify-center gap-4 text-3xl font-mono">
+    <div className="flex flex-col items-center">
+      <span>{timeLeft.weeks}</span>
+      <span className="text-sm text-gray-400">Weeks</span>
+    </div>
     <div className="flex flex-col items-center">
       <span>{timeLeft.days}</span>
       <span className="text-sm text-gray-400">Days</span>
