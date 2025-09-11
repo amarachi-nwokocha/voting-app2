@@ -64,23 +64,10 @@ export default function AdminLogin() {
 
       setSuccess(true)
       
-      // Try multiple redirect methods for production compatibility
-      console.log('🌐 Environment:', process.env.NODE_ENV)
-      console.log('🌐 Current URL:', window.location.href)
-      
-      // Method 1: Next.js router
+      // Force redirect with replace instead of push
       setTimeout(async () => {
-        console.log('🔄 Attempting Next.js router redirect...')
         await router.replace('/admin/dashboard')
-        console.log('✅ Next.js redirect command executed')
-        
-        // Method 2: Fallback with window.location (for production)
-        setTimeout(() => {
-          if (window.location.pathname !== '/admin/dashboard') {
-            console.log('🔄 Fallback: Using window.location redirect...')
-            window.location.href = '/admin/dashboard'
-          }
-        }, 2000)
+        console.log('✅ Redirect command executed')
       }, 1000)
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An unknown error occurred')
@@ -137,18 +124,14 @@ export default function AdminLogin() {
             )}
 
             {success && (
-              <div className="bg-green-900/20 border border-green-500 rounded-lg p-4">
-                <p className="text-green-400 text-sm mb-3">✅ Login successful! Redirecting...</p>
-                <Button
-                  onClick={() => {
-                    console.log('🔄 Manual redirect button clicked')
-                    window.location.href = '/admin/dashboard'
-                  }}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white text-sm py-2"
+              <div className="bg-green-900/20 border border-green-500 rounded-lg p-3">
+                <p className="text-green-400 text-sm mb-2">Login successful! Redirecting...</p>
+                <button
+                  onClick={() => router.replace('/admin/dashboard')}
+                  className="text-green-300 underline text-sm"
                 >
-                  Go to Dashboard →
-                </Button>
-                <p className="text-green-300 text-xs mt-2">Click if not redirected automatically</p>
+                  Click here if not redirected automatically
+                </button>
               </div>
             )}
 
