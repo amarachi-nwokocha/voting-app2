@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '../../lib/superbaseClient'
 import { Button } from '../../components/ui/Button'
 
@@ -68,8 +69,8 @@ export default function AdminLogin() {
         await router.replace('/admin/dashboard')
         console.log('✅ Redirect command executed')
       }, 1000)
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An unknown error occurred')
     } finally {
       setLoading(false)
     }
@@ -144,9 +145,9 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-6 text-center">
-            <a href="/" className="text-[#8BC34A] hover:underline text-sm">
+            <Link href="/" className="text-[#8BC34A] hover:underline text-sm">
               ← Back to Main Site
-            </a>
+            </Link>
           </div>
         </div>
       </div>

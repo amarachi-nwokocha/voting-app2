@@ -15,7 +15,7 @@ export default function Unauthorized() {
           <div className="text-6xl mb-6">🚫</div>
           <h1 className="text-3xl font-bold mb-4 text-red-400">Access Denied</h1>
           <p className="text-gray-300 mb-8">
-            You don't have admin privileges to access this area. Please contact an administrator if you believe this is an error.
+            You don&apos;t have admin privileges to access this area. Please contact an administrator if you believe this is an error.
           </p>
           <div className="space-y-4">
             <Button 

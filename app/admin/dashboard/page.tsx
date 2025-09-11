@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     checkAuth()
     fetchData()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession()
@@ -132,8 +132,9 @@ export default function AdminDashboard() {
       setSelectedContestant('')
       setVoteAmount('')
       fetchData() // Refresh data
-    } catch (error: any) {
-      alert(`Error adding votes: ${error.message}`)
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      alert(`Error adding votes: ${errorMessage}`)
     } finally {
       setAddingVote(false)
     }
