@@ -91,10 +91,10 @@ export default function PaymentSuccessPage() {
         <div>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-lg font-medium">Verifying your payment...</p>
-          <div className="mt-4 p-4 bg-gray-100 rounded text-left text-xs">
+          {/* <div className="mt-4 p-4 bg-gray-100 rounded text-left text-xs">
             <strong>Debug Info:</strong>
             <pre className="mt-2 whitespace-pre-wrap">{debugInfo}</pre>
-          </div>
+          </div> */}
         </div>
       ) : success ? (
         <div>

@@ -204,7 +204,9 @@ export async function POST(request: NextRequest) {
         const voteInserts = []
         for (const vote of votes) {
           const totalAmount = vote.votes * 100 // This is the TOTAL amount for this contestant
-          console.log(`[v0] 📝 Recording ₦${totalAmount} transaction for contestant ${vote.contestantId} (${vote.contestantName})`)
+          // ✅ FIX: Calculate actual vote count based on amount paid (N100 per vote)
+          const actualVoteCount = Math.floor(totalAmount / 100) // N100 per vote
+          console.log(`[v0] 📝 Recording ₦${totalAmount} transaction for contestant ${vote.contestantId} (${vote.contestantName}) = ${actualVoteCount} votes`)
           
           // Get contestant details from our validation result
           const contestantDetails = validContestants?.find(c => c.id === vote.contestantId)
@@ -214,7 +216,7 @@ export async function POST(request: NextRequest) {
             contestant_name: vote.contestantName,
             contestant_code: contestantDetails?.registration_code || null,
             payment_reference: reference,
-            vote_count: vote.votes, // This is the NUMBER of votes (e.g., 5)
+            vote_count: actualVoteCount, // ✅ FIXED: Calculate votes from amount (amount/100)
             amount_paid: totalAmount, // This is the TOTAL amount (e.g., ₦500)
             voter_email: voterEmail,
             transaction_type: 'bulk_vote',
