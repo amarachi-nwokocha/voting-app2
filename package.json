@@ -12,6 +12,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@react-email/components": "^0.5.1",
     "@react-email/render": "^1.2.1",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.56.0",
     "class-variance-authority": "^0.7.1",
     "clsx-tailwind-merge": "^1.0.4",
