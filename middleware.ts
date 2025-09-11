@@ -43,6 +43,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: []  // Temporarily disable middleware
-  // matcher: ['/admin/:path*']  // Re-enable later
+  matcher: ['/admin/dashboard/:path*']  // Only protect dashboard, not login
 }
