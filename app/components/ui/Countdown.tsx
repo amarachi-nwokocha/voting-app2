@@ -20,8 +20,8 @@ export default function CountdownTimer() {
   });
 
   useEffect(() => {
-    // FIXED TARGET DATE - Set to exactly 4 weeks from now
-    const targetDate = new Date(Date.now() + (4 * 7 * 24 * 60 * 60 * 1000));
+    // FIXED TARGET DATE - Set to exactly 4 weeks 4 days from now
+    const targetDate = new Date(Date.now() + ((4 * 7 + 4) * 24 * 60 * 60 * 1000));
 
     const updateCountdown = () => {
       const currentTime = new Date();
