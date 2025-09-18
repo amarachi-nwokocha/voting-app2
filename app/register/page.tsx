@@ -14,6 +14,8 @@ export default function RegisterPage() {
     name: "",
     bio: "",
     creativeField: "",
+    phoneNumber: "",
+    whatsappNumber: "",
     location: "",
     workSample: [""], // multiple links
     socialLinks: [""], // multiple links
@@ -121,6 +123,8 @@ export default function RegisterPage() {
             email: formData.email,
             name: formData.name,
             bio: formData.bio,
+            phone_number: formData.phoneNumber,
+            whatsapp_number: formData.whatsappNumber,
             creative_field: formData.creativeField,
             location: formData.location,
             work_sample: formData.workSample.filter((link) => link.trim() !== ""),
@@ -252,6 +256,31 @@ export default function RegisterPage() {
             <p className="text-xs text-yellow-400 mt-1">You&apos;re approaching the 500-word limit</p>
           )}
         </div>
+        {/* Phone Number */}
+        <div>
+          <label className="block mb-2 text-sm font-medium text-[#C0A000]">Phone Number</label>
+          <input
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-xl bg-black/60 border border-zinc-700"
+          />
+        </div>
+
+        {/* WhatsApp Number */}
+        <div>
+          <label className="block mb-2 text-sm font-medium text-[#C0A000]">WhatsApp Number</label>
+          <input
+            type="tel"
+            name="whatsappNumber"
+            value={formData.whatsappNumber}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-xl bg-black/60 border border-zinc-700"
+          />
+        </div>
 
         {/* Creative Field */}
         <div>
@@ -344,7 +373,7 @@ export default function RegisterPage() {
             + Add another social link
           </button>
         </div>
-       <Footer />
+        <Footer />
         {/* Submit */}
         <button
           type="submit"
