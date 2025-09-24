@@ -20,8 +20,26 @@ export default function CountdownTimer() {
   });
 
   useEffect(() => {
-    // FIXED TARGET DATE - Set to exactly 4 weeks 4 days from now
-    const targetDate = new Date(Date.now() + ((4 * 7 + 4) * 24 * 60 * 60 * 1000));
+    // TARGET DATE - Set to the 19th of next month
+    const getTargetDate = () => {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+      
+      // Get next month (handle year rollover)
+      let nextMonth = currentMonth + 1;
+      let targetYear = currentYear;
+      
+      if (nextMonth > 11) {
+        nextMonth = 0;
+        targetYear = currentYear + 1;
+      }
+      
+      // Set target to 19th of next month at midnight
+      return new Date(targetYear, nextMonth, 19, 0, 0, 0);
+    };
+
+    const targetDate = getTargetDate();
 
     const updateCountdown = () => {
       const currentTime = new Date();
