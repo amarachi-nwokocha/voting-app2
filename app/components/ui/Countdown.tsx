@@ -20,23 +20,11 @@ export default function CountdownTimer() {
   });
 
   useEffect(() => {
-    // TARGET DATE - Set to the 19th of next month
+    // TARGET DATE - 9 days from now
     const getTargetDate = () => {
       const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth();
-      
-      // Get next month (handle year rollover)
-      let nextMonth = currentMonth + 1;
-      let targetYear = currentYear;
-      
-      if (nextMonth > 11) {
-        nextMonth = 0;
-        targetYear = currentYear + 1;
-      }
-      
-      // Set target to 19th of next month at midnight
-      return new Date(targetYear, nextMonth, 19, 0, 0, 0);
+      // add 9 days in milliseconds
+      return new Date(now.getTime() + 9 * 24 * 60 * 60 * 1000);
     };
 
     const targetDate = getTargetDate();
@@ -72,9 +60,7 @@ export default function CountdownTimer() {
 
   return (
     <div className="text-center p-4 rounded-2xl bg-black/100 text-white shadow-lg">
-      <h3 className="text-2xl font-semibold mb-4">
-        Voting Closes In
-      </h3>
+      <h3 className="text-2xl font-semibold mb-4">Voting Closes In</h3>
 
       <div className="flex justify-center gap-4 text-3xl font-mono">
         <div className="flex flex-col items-center">
@@ -100,7 +86,9 @@ export default function CountdownTimer() {
       </div>
 
       <p className="mt-6 text-gray-300 text-sm max-w-md mx-auto">
-        At the end of the countdown, only contestants with <span className="font-semibold text-green-400">3,000 votes or more</span> will qualify as winners.
+        At the end of the countdown, only contestants with{" "}
+        <span className="font-semibold text-green-400">3,000 votes or more</span>{" "}
+        will qualify as winners.
       </p>
     </div>
   );
