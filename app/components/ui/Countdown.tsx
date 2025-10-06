@@ -20,11 +20,11 @@ export default function CountdownTimer() {
   });
 
   useEffect(() => {
-    // TARGET DATE - 9 days from now
+    // TARGET DATE - 4 days from now
     const getTargetDate = () => {
       const now = new Date();
-      // add 9 days in milliseconds
-      return new Date(now.getTime() + 9 * 24 * 60 * 60 * 1000);
+      // add 4 days in milliseconds
+      return new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000);
     };
 
     const targetDate = getTargetDate();
@@ -43,7 +43,7 @@ export default function CountdownTimer() {
       const remainingDays = totalDays % 7;
 
       setTimeLeft({
-        weeks: weeks,
+        weeks,
         days: remainingDays,
         hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / (1000 * 60)) % 60),
@@ -59,7 +59,7 @@ export default function CountdownTimer() {
   }, []);
 
   return (
-    <div className="text-center p-4 rounded-2xl bg-black/100 text-white shadow-lg">
+    <div className="text-center p-4 rounded-2xl bg-black text-white shadow-lg">
       <h3 className="text-2xl font-semibold mb-4">Voting Closes In</h3>
 
       <div className="flex justify-center gap-4 text-3xl font-mono">
