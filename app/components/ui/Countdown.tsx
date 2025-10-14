@@ -24,7 +24,7 @@ export default function CountdownTimer() {
     const getTargetDate = () => {
       const now = new Date();
       // add 4 days in milliseconds
-      return new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
+      return new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000);
     };
 
     const targetDate = getTargetDate();
