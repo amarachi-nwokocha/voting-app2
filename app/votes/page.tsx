@@ -152,7 +152,7 @@ export default function VotePage() {
   const checkVotingPeriod = () => {
     const now = new Date()
     const votingStart = new Date('2025-09-08T00:00:00Z')
-    const votingEnd = new Date('2025-10-19T23:59:59Z')
+    const votingEnd = new Date('2025-10-17T23:59:59Z')
     
     if (now < votingStart) {
       alert(`Voting has not started yet. Voting begins on ${votingStart.toLocaleDateString()}`)
