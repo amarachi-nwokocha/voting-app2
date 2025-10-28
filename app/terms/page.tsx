@@ -85,7 +85,7 @@ export default function TermsAndConditions() {
             <ul className="list-disc pl-6 space-y-3 text-base">
               <li>Seven winners will each receive ₦1,000,000 (One Million Naira only).</li>
               <li>For winners outside Nigeria, an equivalent value will be paid in local currency at the prevailing exchange rate.</li>
-              <li>Prizes will be processed and paid within 30 working days of announcement.</li>
+              <li>Prizes will be processed and paid within 60 working days of announcement.</li>
               <li>Prizes are non-transferable and non-exchangeable.</li>
             </ul>
           </AccordionItem>
